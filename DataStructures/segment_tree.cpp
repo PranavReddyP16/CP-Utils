@@ -60,46 +60,29 @@ T to_lower(T s){ transform(s.begin(), s.end(), s.begin(), ::tolower); return s; 
 
 #define rep(i,n) for(int i=0;i<n;i++)
 
-struct Trie
-{
-    unordered_map<char, Trie*> mp;
-    bool isEndOfWord;
-};
+int n;
+vi t(2*n); //while taking input for the array put the values in t[i+n]
 
-Trie* makeNode()
+void build()
 {
-    Trie* temp = new Trie;
-    temp->isEndOfWord = false;
-    return temp;
+    for(int i=n-1;i>0;i--) t[i] = t[i<<1] + t[i<<1|1];
 }
 
-void insert(Trie*& root, const string& s)
+void modify(int pos, int val)
 {
-    if(root==nullptr) root = makeNode();
-
-    Trie* temp = root;
-    for(int i=0;i<sz(s);i++)
-    {
-        if(temp->mp.find(s[i]) == temp->mp.end())
-        {
-            temp->mp[s[i]] = makeNode();
-        }
-        temp = temp->mp[s[i]];
-    }
-    temp->isEndOfWord = true;
+    for(t[pos+=n] = val;pos>1;pos>>=1) t[pos<<1] = t[pos] + t[pos^1];
 }
 
-bool search(Trie* root, const string& s)
+int query(int l, int r)
 {
-    if(root==nullptr) return false;
-    Trie* temp = root;
-    for(int i=0;i<sz(s);i++)
+    int res=0;
+    for(l+=n,r+=n; l<r; l>>=1,r>>=1)
     {
-        if(temp->mp[s[i]]==nullptr) return false;
-        temp = temp->mp[s[i]];
+        if(l&1) res += t[l++];
+        if(r&1) res += t[--r];
     }
 
-    return temp->isEndOfWord;
+    return res;
 }
 
 int main()
