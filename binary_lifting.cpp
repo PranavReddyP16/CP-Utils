@@ -110,6 +110,28 @@ int walk(int u, int n)
     return ans;
 }
 
+int lca(int a, int b, int m)
+{
+    a--;b--;
+
+    if(height[a]<height[b]) swap(a,b);
+
+    a = walk(a, height[a]-height[b]);
+    if(a==b)
+    {
+        cout<<a+1<<endl;
+        return 0;
+    }
+
+    int ans=0;
+    for(int i=m-1;i>=0;i--)
+    {
+        if(walk(a,(1<<i) + ans) != walk(b,(1<<i) + ans)) ans += (1<<i);
+    }
+
+    return walk(a, ans+1)+1;
+}
+
 signed main()
 {
     ios_base :: sync_with_stdio(false);
@@ -137,8 +159,6 @@ signed main()
 
     dfs(0);
     steps[0][0]=0;
-    //for(int i=0;i<n;i++) cout<<height[i]<<" ";
-    //cout<<endl;
 
     for(int i=1;i<m;i++)
     {
@@ -151,24 +171,7 @@ signed main()
     cout<<"Enter two nodes to find the LCA of:"<<endl;
     int a,b;
     cin>>a>>b;
-    a--;b--;
-
-    if(height[a]<height[b]) swap(a,b);
-
-    a = walk(a, height[a]-height[b]);
-    if(a==b)
-    {
-        cout<<a+1<<endl;
-        return 0;
-    }
-
-    int ans=0;
-    for(int i=m-1;i>=0;i--)
-    {
-        if(walk(a,(1<<i) + ans) != walk(b,(1<<i) + ans)) ans += (1<<i);
-    }
-
-    cout<<walk(a, ans+1)+1<<endl;
+    cout<<lca(a,b,m)<<endl;
 
     auto stopTime = curTime();
     auto duration = duration_cast<microseconds>(stopTime - startTime);
