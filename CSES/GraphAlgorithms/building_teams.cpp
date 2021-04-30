@@ -20,7 +20,28 @@ high_resolution_clock::time_point curTime() { return high_resolution_clock::now(
 
 #define rep(i,n) for(int i=0;i<n;i++)
 
+vector<vector<int>> adj;
+vector<int> col;
 
+bool dfs(int u)
+{
+    bool ans = true;
+    for(int v : adj[u])
+    {
+        if(col[v]==-1)
+        {
+            col[v] = (col[u]+1)%2;
+            ans = ans&dfs(v);
+        }
+
+        else if(col[v]==col[u])
+        {
+            return false;
+        }
+    }
+
+    return ans;
+}
 
 signed main()
 {
@@ -28,7 +49,41 @@ signed main()
     cin.tie(NULL);
     auto startTime = curTime();
 
-    
+    int n,m;
+    cin>>n>>m;
+
+    adj.resize(n);
+    col.resize(n,-1);
+
+    for(int i=0;i<m;i++)
+    {
+        int u,v;
+        cin>>u>>v;
+        u--;v--;
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    bool ans = true;
+    for(int i=0;i<n;i++)
+    {
+        if(col[i]==-1)
+        {
+            col[i]=0;
+            ans = ans&dfs(i);
+        }
+    }
+
+    if(ans==false)
+    {
+        cout<<"IMPOSSIBLE"<<endl;
+    }
+    else
+    {
+        for(int i=0;i<n;i++) cout<<col[i]+1<<" ";
+        cout<<endl;
+    }
 
     auto stopTime = curTime();
     auto duration = duration_cast<microseconds>(stopTime - startTime);
