@@ -1,7 +1,6 @@
 #include "bits/stdc++.h"
 #include <ext/pb_ds/assoc_container.hpp>
 #include <ext/pb_ds/tree_policy.hpp>
-#include <linux/limits.h>
 
 using namespace __gnu_pbds;
 using namespace std;
@@ -29,39 +28,18 @@ signed main()
     cin.tie(NULL);
     auto startTime = curTime();
 
-    int n,x;    
-    cin>>n>>x;
+    int n;
+    cin>>n;
 
     vector<int> a(n);
+    set<int> st;
     for(int i=0;i<n;i++)
     {
         cin>>a[i];
-    }
-    sort(a.begin(), a.end());
-    
-    int p=n-1;
-    int ans=0;
-    vector<int> vis(n);
-    for(int i=0;i<n;i++)
-    {
-        while(p>i && a[p]+a[i]>x)
-        {
-            p--;
-        }
-        if(p<=i) break;
-
-        vis[p]=1;
-        ans++;
-        vis[i]=1;
-        p--;
+        st.insert(a[i]);
     }
 
-    for(int i=0;i<n;i++) 
-    {
-        if(vis[i]==0) ans++;
-    }
-
-    cout<<ans<<endl;
+    cout<<sz(st)<<endl;
 
     auto stopTime = curTime();
     auto duration = duration_cast<microseconds>(stopTime - startTime);
