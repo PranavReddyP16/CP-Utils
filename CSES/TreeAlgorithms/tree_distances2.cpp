@@ -25,8 +25,9 @@ high_resolution_clock::time_point curTime() { return high_resolution_clock::now(
 vector<vector<int>> adj;
 vector<int> vis;
 vector<int> dist;
+vector<int> subtree;
 
-void far(int u)
+void dfs(int u)
 {
     vis[u]=1;
     for(int v : adj[u])
@@ -34,9 +35,12 @@ void far(int u)
         if(!vis[v])
         {
             dist[v] = dist[u]+1;
-            far(v);
+            dfs(v);
+            subtree[u] += subtree[v];
         }
     }
+
+    subtree[u]++;
 }
 
 signed main()
@@ -51,6 +55,7 @@ signed main()
     adj.resize(n);
     vis.resize(n);
     dist.resize(n);
+    subtree.resize(n);
 
     for(int i=0;i<n-1;i++)
     {
@@ -62,67 +67,35 @@ signed main()
         adj[v].push_back(u);
     }
 
-    far(0);
-    int a = 0;
-    for(int i=0;i<n;i++)
-    {
-        if(dist[i] > dist[a]) a=i;
-    }
+    dfs(0);
+
+
+    vector<int> ans(n);
+    for(int i=0;i<n;i++) ans[0] += dist[i];
 
     vis.clear();
-    dist.clear();
     vis.resize(n);
-    dist.resize(n);
-
-    far(a);
-    int b = a;
-    for(int i=0;i<n;i++)
-    {
-        if(dist[i] > dist[b]) b = i;
-    }
 
     queue<int> q;
-    q.push(a);
-    vis.clear();
-    vis.resize(n);
-    vector<int> dista(n);
-
+    q.push(0);
+    
     while(!q.empty())
     {
         int u = q.front();
-        vis[u]=1;
         q.pop();
+        vis[u]=1;
 
         for(int v : adj[u])
         {
             if(vis[v]) continue;
             q.push(v);
             vis[v]=1;
-            dista[v] = dista[u]+1;
+
+            ans[v] = ans[u] - subtree[v] + n - subtree[v];
         }
     }
 
-    vis.clear();
-    vis.resize(n);
-    vector<int> distb(n);
-    q.push(b);
-
-    while(!q.empty())
-    {
-        int u = q.front();
-        vis[u]=1;
-        q.pop();
-
-        for(int v : adj[u])
-        {
-            if(vis[v]) continue;
-            q.push(v);
-            vis[v]=1;
-            distb[v] = distb[u]+1;
-        }
-    }
-
-    for(int i=0;i<n;i++) cout<<max(dista[i], distb[i])<<" ";
+    for(int i=0;i<n;i++) cout<<ans[i]<<" ";
     cout<<endl;
 
     auto stopTime = curTime();
